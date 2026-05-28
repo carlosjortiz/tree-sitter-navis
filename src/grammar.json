@@ -6,12 +6,8 @@
       "type": "REPEAT",
       "content": {
         "type": "SYMBOL",
-        "name": "_line"
+        "name": "comment"
       }
-    },
-    "_line": {
-      "type": "PATTERN",
-      "value": "[^\\n]+"
     },
     "comment": {
       "type": "TOKEN",
@@ -33,11 +29,7 @@
   "extras": [
     {
       "type": "PATTERN",
-      "value": "\\s"
-    },
-    {
-      "type": "SYMBOL",
-      "name": "comment"
+      "value": "[ \\t\\r\\n]"
     }
   ],
   "conflicts": [],

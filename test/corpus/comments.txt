@@ -1,0 +1,70 @@
+==================
+empty file
+==================
+
+
+
+---
+
+(source_file)
+
+==================
+single line comment
+==================
+
+# this is a comment
+
+---
+
+(source_file
+  (comment))
+
+==================
+multiple comments
+==================
+
+# first
+# second
+# third
+
+---
+
+(source_file
+  (comment)
+  (comment)
+  (comment))
+
+==================
+comment with special characters
+==================
+
+# spaces, punctuation: !?@$%^&*()_+-=[]{}|;:,.<>?/
+
+---
+
+(source_file
+  (comment))
+
+==================
+comments separated by blank lines
+==================
+
+# first
+
+
+# second
+
+---
+
+(source_file
+  (comment)
+  (comment))
+
+==================
+comment without trailing newline
+==================
+# no trailing newline
+---
+
+(source_file
+  (comment))

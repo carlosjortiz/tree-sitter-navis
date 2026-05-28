@@ -3,11 +3,8 @@
  * @author Carlos J. Ortiz
  * @license MIT OR Apache-2.0
  *
- * The grammar is built incrementally. Each rule lands with corpus tests
- * before moving to the next. This skeleton produces a parser that
- * `tree-sitter generate` can build and the Rust binding can load, so
- * the surrounding tooling (corpus tests, crate build) is wired end-to-end
- * before any real syntax lands.
+ * The grammar is built incrementally. Each construct lands with corpus
+ * tests before the next one is added.
  *
  * Target constructs (see Navis decisions doc):
  *   - Endpoint vars:        `@key = value`
@@ -28,19 +25,19 @@
 module.exports = grammar({
   name: 'navis',
 
-  extras: $ => [
-    /\s/,
-    $.comment,
+  extras: _ => [
+    /[ \t\r\n]/,
   ],
 
   rules: {
-    // Placeholder root: a file is a stream of lines until the real grammar
-    // lands. This is intentionally permissive so the generated parser can
-    // be loaded by the Rust binding and the corpus harness.
-    source_file: $ => repeat($._line),
+    // A file is, for now, a (possibly empty) sequence of comments.
+    // Each real construct (endpoint vars, requests, etc.) joins this
+    // choice as it lands, one at a time.
+    source_file: $ => repeat($.comment),
 
-    _line: $ => /[^\n]+/,
-
-    comment: $ => token(seq('#', /[^\n]*/)),
+    // Line comment: `#` followed by anything until end of line.
+    // Disambiguating from directives like `# @no-cookie-jar` happens when
+    // directives land — for now everything starting with `#` is a comment.
+    comment: _ => token(seq('#', /[^\n]*/)),
   },
 });
