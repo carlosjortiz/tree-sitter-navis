@@ -57,10 +57,13 @@ This project uses **pnpm** as its package manager (not npm).
 
 ```sh
 pnpm install
-pnpm tree-sitter generate    # produces src/parser.c
-pnpm tree-sitter test        # runs the corpus tests
-cargo build                  # builds the Rust crate
+pnpm rebuild tree-sitter-cli   # see note below
+pnpm tree-sitter generate      # produces src/parser.c
+pnpm tree-sitter test          # runs the corpus tests
+cargo build                    # builds the Rust crate
 ```
+
+> **First-time setup note**: pnpm v9+ blocks postinstall scripts of dependencies by default. The `tree-sitter-cli` package needs its postinstall to run once to download the native `tree-sitter` binary. The `pnpm rebuild tree-sitter-cli` step takes care of that. It is required only the first time after a fresh install.
 
 The generated `src/parser.c` is committed to the repo, so consumers of the crate don't need Node at build time.
 

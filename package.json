@@ -1,0 +1,32 @@
+{
+  "name": "tree-sitter-navis",
+  "version": "0.1.0",
+  "description": "Tree-sitter grammar for the Navis .navis file format",
+  "license": "MIT OR Apache-2.0",
+  "author": "Carlos J. Ortiz",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/carlosjortiz/tree-sitter-navis.git"
+  },
+  "keywords": [
+    "tree-sitter",
+    "parser",
+    "navis",
+    "http",
+    "api-client"
+  ],
+  "scripts": {
+    "build": "tree-sitter generate",
+    "test": "tree-sitter test",
+    "parse": "tree-sitter parse"
+  },
+  "devDependencies": {
+    "tree-sitter-cli": "^0.25"
+  },
+  "packageManager": "pnpm@9.0.0",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "tree-sitter-cli"
+    ]
+  }
+}

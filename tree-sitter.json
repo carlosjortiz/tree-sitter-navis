@@ -1,0 +1,38 @@
+{
+  "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/config.schema.json",
+  "grammars": [
+    {
+      "name": "navis",
+      "camelcase": "Navis",
+      "title": "Navis",
+      "scope": "source.navis",
+      "file-types": [
+        "navis"
+      ],
+      "injection-regex": "^navis$",
+      "class-name": "TreeSitterNavis"
+    }
+  ],
+  "metadata": {
+    "version": "0.1.0",
+    "license": "MIT OR Apache-2.0",
+    "description": "Tree-sitter grammar for the Navis .navis file format",
+    "authors": [
+      {
+        "name": "Carlos J. Ortiz"
+      }
+    ],
+    "links": {
+      "repository": "https://github.com/carlosjortiz/tree-sitter-navis"
+    }
+  },
+  "bindings": {
+    "c": false,
+    "go": false,
+    "node": false,
+    "python": false,
+    "rust": true,
+    "swift": false,
+    "zig": false
+  }
+}
