@@ -1,0 +1,21 @@
+# Rust
+target/
+Cargo.lock
+
+# Node (pnpm)
+node_modules/
+.pnpm-store/
+
+# Tree-sitter build artifacts
+build/
+*.wasm
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
