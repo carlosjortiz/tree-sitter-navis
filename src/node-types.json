@@ -57,6 +57,42 @@
     "fields": {}
   },
   {
+    "type": "request",
+    "named": true,
+    "fields": {
+      "method": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "method",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "request_name",
+            "named": true
+          }
+        ]
+      },
+      "url": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "url",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "source_file",
     "named": true,
     "root": true,
@@ -71,6 +107,29 @@
         },
         {
           "type": "endpoint_var",
+          "named": true
+        },
+        {
+          "type": "request",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "url",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "placeholder",
+          "named": true
+        },
+        {
+          "type": "text_literal",
           "named": true
         }
       ]
@@ -94,6 +153,10 @@
         }
       ]
     }
+  },
+  {
+    "type": "###",
+    "named": false
   },
   {
     "type": ".",
@@ -124,8 +187,16 @@
     "named": true
   },
   {
+    "type": "method",
+    "named": true
+  },
+  {
     "type": "request",
     "named": false
+  },
+  {
+    "type": "request_name",
+    "named": true
   },
   {
     "type": "text_literal",

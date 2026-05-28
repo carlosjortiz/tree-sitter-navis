@@ -16,6 +16,10 @@
             "name": "endpoint_var"
           },
           {
+            "type": "SYMBOL",
+            "name": "request"
+          },
+          {
             "type": "PATTERN",
             "value": "\\n"
           }
@@ -149,6 +153,75 @@
         }
       ]
     },
+    "request": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "###"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "name",
+              "content": {
+                "type": "SYMBOL",
+                "name": "request_name"
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "PATTERN",
+          "value": "\\n"
+        },
+        {
+          "type": "FIELD",
+          "name": "method",
+          "content": {
+            "type": "SYMBOL",
+            "name": "method"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "url",
+          "content": {
+            "type": "SYMBOL",
+            "name": "url"
+          }
+        }
+      ]
+    },
+    "request_name": {
+      "type": "PATTERN",
+      "value": "[^\\r\\n]+"
+    },
+    "method": {
+      "type": "PATTERN",
+      "value": "[A-Z]+"
+    },
+    "url": {
+      "type": "REPEAT1",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "placeholder"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "text_literal"
+          }
+        ]
+      }
+    },
     "comment": {
       "type": "TOKEN",
       "content": {
@@ -159,8 +232,25 @@
             "value": "#"
           },
           {
-            "type": "PATTERN",
-            "value": "[^\\r\\n]*"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "PATTERN",
+                    "value": "[ \\t]"
+                  },
+                  {
+                    "type": "PATTERN",
+                    "value": "[^\\r\\n]*"
+                  }
+                ]
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
           }
         ]
       }

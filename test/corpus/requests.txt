@@ -1,0 +1,163 @@
+==================
+request with name and GET
+==================
+
+### Login
+GET https://api.example.com/users
+
+---
+
+(source_file
+  (request
+    name: (request_name)
+    method: (method)
+    url: (url
+      (text_literal))))
+
+==================
+request without name
+==================
+
+###
+GET https://api.example.com/users
+
+---
+
+(source_file
+  (request
+    method: (method)
+    url: (url
+      (text_literal))))
+
+==================
+common HTTP methods
+==================
+
+### Get
+GET /users
+### Create
+POST /users
+### Update
+PUT /users
+### Delete
+DELETE /users
+### Patch
+PATCH /users
+
+---
+
+(source_file
+  (request
+    name: (request_name)
+    method: (method)
+    url: (url (text_literal)))
+  (request
+    name: (request_name)
+    method: (method)
+    url: (url (text_literal)))
+  (request
+    name: (request_name)
+    method: (method)
+    url: (url (text_literal)))
+  (request
+    name: (request_name)
+    method: (method)
+    url: (url (text_literal)))
+  (request
+    name: (request_name)
+    method: (method)
+    url: (url (text_literal))))
+
+==================
+URL with placeholders only
+==================
+
+### Get user
+GET {{api.base_url}}/users/{{id}}
+
+---
+
+(source_file
+  (request
+    name: (request_name)
+    method: (method)
+    url: (url
+      (placeholder
+        qualifier: (qualifier)
+        name: (identifier))
+      (text_literal)
+      (placeholder
+        name: (identifier)))))
+
+==================
+URL with text and placeholder mix
+==================
+
+### Create
+POST https://{{api.host}}:8080/v1/users
+
+---
+
+(source_file
+  (request
+    name: (request_name)
+    method: (method)
+    url: (url
+      (text_literal)
+      (placeholder
+        qualifier: (qualifier)
+        name: (identifier))
+      (text_literal))))
+
+==================
+multiple requests with endpoint vars and comments
+==================
+
+@base = https://api.example.com
+
+# Authentication endpoints
+
+### Login
+POST {{base}}/auth/login
+
+### Get current user
+GET {{base}}/me
+
+---
+
+(source_file
+  (endpoint_var
+    name: (identifier)
+    value: (value
+      (text_literal)))
+  (comment)
+  (request
+    name: (request_name)
+    method: (method)
+    url: (url
+      (placeholder
+        name: (identifier))
+      (text_literal)))
+  (request
+    name: (request_name)
+    method: (method)
+    url: (url
+      (placeholder
+        name: (identifier))
+      (text_literal))))
+
+==================
+custom HTTP method (WebDAV)
+==================
+
+### List files
+PROPFIND /webdav/files
+
+---
+
+(source_file
+  (request
+    name: (request_name)
+    method: (method)
+    url: (url
+      (text_literal))))
