@@ -1,0 +1,87 @@
+==================
+single endpoint var
+==================
+
+@base = http://localhost:3000
+
+---
+
+(source_file
+  (endpoint_var
+    name: (identifier)
+    value: (value)))
+
+==================
+multiple endpoint vars
+==================
+
+@base = http://localhost:3000
+@version = v1
+
+---
+
+(source_file
+  (endpoint_var
+    name: (identifier)
+    value: (value))
+  (endpoint_var
+    name: (identifier)
+    value: (value)))
+
+==================
+endpoint vars mixed with comments
+==================
+
+# base URL
+@base = http://localhost:3000
+# API version
+@version = v1
+
+---
+
+(source_file
+  (comment)
+  (endpoint_var
+    name: (identifier)
+    value: (value))
+  (comment)
+  (endpoint_var
+    name: (identifier)
+    value: (value)))
+
+==================
+endpoint var with extra whitespace around equals
+==================
+
+@key   =   value with spaces
+
+---
+
+(source_file
+  (endpoint_var
+    name: (identifier)
+    value: (value)))
+
+==================
+identifier with underscores
+==================
+
+@my_var_name = something
+
+---
+
+(source_file
+  (endpoint_var
+    name: (identifier)
+    value: (value)))
+
+==================
+endpoint var without trailing newline
+==================
+@key = no trailing newline
+---
+
+(source_file
+  (endpoint_var
+    name: (identifier)
+    value: (value)))

@@ -13,7 +13,7 @@
  *   - Per-request directive `# @no-cookie-jar`
  *   - Request line:         `METHOD URL`
  *   - Headers:              `Key: value`
- *   - Body:                 raw text (typed by content-type in later epics)
+ *   - Body:                 raw text
  *   - Per-request blocks:   `assert { ... }` / `tests { ... }` / `docs { ... }`  (opaque)
  *   - Placeholders:         `{{ qualifier.name }}`
  *   - Line comments:        `# ...`
@@ -25,19 +25,47 @@
 module.exports = grammar({
   name: 'navis',
 
+  // Spaces, tabs and carriage returns are skipped between tokens.
+  // Newlines (`\n`) are SIGNIFICANT — they separate top-level items —
+  // so they are NOT in extras; they appear explicitly in the grammar.
   extras: _ => [
-    /[ \t\r\n]/,
+    /[ \t]/,
+    /\r/,
   ],
 
   rules: {
-    // A file is, for now, a (possibly empty) sequence of comments.
-    // Each real construct (endpoint vars, requests, etc.) joins this
-    // choice as it lands, one at a time.
-    source_file: $ => repeat($.comment),
+    // A file is a sequence of top-level items: comments, endpoint vars,
+    // and blank-line separators (anonymous newlines that don't appear in
+    // the tree). Real constructs are added to this choice as they land.
+    source_file: $ => repeat(choice(
+      $.comment,
+      $.endpoint_var,
+      /\n/,
+    )),
+
+    // ---- Endpoint vars ------------------------------------------------------
+
+    // `@key = value` at file scope. The value runs to the end of the line;
+    // placeholders are not yet broken out of it.
+    endpoint_var: $ => seq(
+      '@',
+      field('name', $.identifier),
+      '=',
+      field('value', $.value),
+    ),
+
+    identifier: _ => /[a-zA-Z_][a-zA-Z0-9_]*/,
+
+    // `token(...)` makes the value a single lexer token so `extras` can't
+    // sneak inside it (e.g. a stray space wouldn't split it). The body of
+    // the regex stops at newline so the next top-level item starts.
+    value: _ => token(/[^\r\n]+/),
+
+    // ---- Comments -----------------------------------------------------------
 
     // Line comment: `#` followed by anything until end of line.
     // Disambiguating from directives like `# @no-cookie-jar` happens when
     // directives land — for now everything starting with `#` is a comment.
-    comment: _ => token(seq('#', /[^\n]*/)),
+    comment: _ => token(seq('#', /[^\r\n]*/)),
   },
 });
