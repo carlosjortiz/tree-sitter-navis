@@ -9,7 +9,8 @@ single endpoint var
 (source_file
   (endpoint_var
     name: (identifier)
-    value: (value)))
+    value: (value
+      (text_literal))))
 
 ==================
 multiple endpoint vars
@@ -23,10 +24,12 @@ multiple endpoint vars
 (source_file
   (endpoint_var
     name: (identifier)
-    value: (value))
+    value: (value
+      (text_literal)))
   (endpoint_var
     name: (identifier)
-    value: (value)))
+    value: (value
+      (text_literal))))
 
 ==================
 endpoint vars mixed with comments
@@ -43,11 +46,13 @@ endpoint vars mixed with comments
   (comment)
   (endpoint_var
     name: (identifier)
-    value: (value))
+    value: (value
+      (text_literal)))
   (comment)
   (endpoint_var
     name: (identifier)
-    value: (value)))
+    value: (value
+      (text_literal))))
 
 ==================
 endpoint var with extra whitespace around equals
@@ -60,7 +65,8 @@ endpoint var with extra whitespace around equals
 (source_file
   (endpoint_var
     name: (identifier)
-    value: (value)))
+    value: (value
+      (text_literal))))
 
 ==================
 identifier with underscores
@@ -73,7 +79,8 @@ identifier with underscores
 (source_file
   (endpoint_var
     name: (identifier)
-    value: (value)))
+    value: (value
+      (text_literal))))
 
 ==================
 endpoint var without trailing newline
@@ -84,4 +91,5 @@ endpoint var without trailing newline
 (source_file
   (endpoint_var
     name: (identifier)
-    value: (value)))
+    value: (value
+      (text_literal))))

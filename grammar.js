@@ -25,18 +25,12 @@
 module.exports = grammar({
   name: 'navis',
 
-  // Spaces, tabs and carriage returns are skipped between tokens.
-  // Newlines (`\n`) are SIGNIFICANT — they separate top-level items —
-  // so they are NOT in extras; they appear explicitly in the grammar.
   extras: _ => [
     /[ \t]/,
     /\r/,
   ],
 
   rules: {
-    // A file is a sequence of top-level items: comments, endpoint vars,
-    // and blank-line separators (anonymous newlines that don't appear in
-    // the tree). Real constructs are added to this choice as they land.
     source_file: $ => repeat(choice(
       $.comment,
       $.endpoint_var,
@@ -45,8 +39,6 @@ module.exports = grammar({
 
     // ---- Endpoint vars ------------------------------------------------------
 
-    // `@key = value` at file scope. The value runs to the end of the line;
-    // placeholders are not yet broken out of it.
     endpoint_var: $ => seq(
       '@',
       field('name', $.identifier),
@@ -56,16 +48,35 @@ module.exports = grammar({
 
     identifier: _ => /[a-zA-Z_][a-zA-Z0-9_]*/,
 
-    // `token(...)` makes the value a single lexer token so `extras` can't
-    // sneak inside it (e.g. a stray space wouldn't split it). The body of
-    // the regex stops at newline so the next top-level item starts.
-    value: _ => token(/[^\r\n]+/),
+    // The value is no longer a flat token: it interleaves literal text and
+    // placeholders so the walker (US-2) can resolve variables without
+    // re-parsing the value at runtime.
+    value: $ => repeat1(choice(
+      $.placeholder,
+      $.text_literal,
+    )),
+
+    // Literal chunk of a value: anything that is not `{` or end of line.
+    // `prec(-1)` makes the parser prefer `placeholder` when both could
+    // match. A bare `{` in a value is therefore an error today — fine for
+    // MVP; we'll relax it if a real case shows up.
+    text_literal: _ => token(prec(-1, /[^{\r\n]+/)),
+
+    // ---- Placeholders -------------------------------------------------------
+
+    // `{{ name }}` or `{{ qualifier.name }}`. The four qualifier names
+    // mirror the variable scopes defined in the decisions doc.
+    placeholder: $ => seq(
+      '{{',
+      optional(seq(field('qualifier', $.qualifier), '.')),
+      field('name', $.identifier),
+      '}}',
+    ),
+
+    qualifier: _ => choice('workspace', 'api', 'endpoint', 'request'),
 
     // ---- Comments -----------------------------------------------------------
 
-    // Line comment: `#` followed by anything until end of line.
-    // Disambiguating from directives like `# @no-cookie-jar` happens when
-    // directives land — for now everything starting with `#` is a comment.
     comment: _ => token(seq('#', /[^\r\n]*/)),
   },
 });

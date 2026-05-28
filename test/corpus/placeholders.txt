@@ -1,0 +1,136 @@
+==================
+plain text value (no placeholder)
+==================
+
+@x = simple value
+
+---
+
+(source_file
+  (endpoint_var
+    name: (identifier)
+    value: (value
+      (text_literal))))
+
+==================
+single placeholder without qualifier
+==================
+
+@url = {{base}}
+
+---
+
+(source_file
+  (endpoint_var
+    name: (identifier)
+    value: (value
+      (placeholder
+        name: (identifier)))))
+
+==================
+single placeholder with qualifier
+==================
+
+@url = {{api.base_url}}
+
+---
+
+(source_file
+  (endpoint_var
+    name: (identifier)
+    value: (value
+      (placeholder
+        qualifier: (qualifier)
+        name: (identifier)))))
+
+==================
+all four qualifier types
+==================
+
+@a = {{workspace.x}}
+@b = {{api.x}}
+@c = {{endpoint.x}}
+@d = {{request.x}}
+
+---
+
+(source_file
+  (endpoint_var
+    name: (identifier)
+    value: (value
+      (placeholder
+        qualifier: (qualifier)
+        name: (identifier))))
+  (endpoint_var
+    name: (identifier)
+    value: (value
+      (placeholder
+        qualifier: (qualifier)
+        name: (identifier))))
+  (endpoint_var
+    name: (identifier)
+    value: (value
+      (placeholder
+        qualifier: (qualifier)
+        name: (identifier))))
+  (endpoint_var
+    name: (identifier)
+    value: (value
+      (placeholder
+        qualifier: (qualifier)
+        name: (identifier)))))
+
+==================
+text mixed with placeholder
+==================
+
+@url = https://{{api.host}}/v1/users
+
+---
+
+(source_file
+  (endpoint_var
+    name: (identifier)
+    value: (value
+      (text_literal)
+      (placeholder
+        qualifier: (qualifier)
+        name: (identifier))
+      (text_literal))))
+
+==================
+multiple placeholders in one value
+==================
+
+@url = {{base}}/{{path}}/{{id}}
+
+---
+
+(source_file
+  (endpoint_var
+    name: (identifier)
+    value: (value
+      (placeholder
+        name: (identifier))
+      (text_literal)
+      (placeholder
+        name: (identifier))
+      (text_literal)
+      (placeholder
+        name: (identifier)))))
+
+==================
+placeholder with whitespace inside braces
+==================
+
+@url = {{ api.host }}
+
+---
+
+(source_file
+  (endpoint_var
+    name: (identifier)
+    value: (value
+      (placeholder
+        qualifier: (qualifier)
+        name: (identifier)))))
