@@ -2,6 +2,15 @@
 target/
 Cargo.lock
 
+# MSVC linker / compiler artefacts that the `cc` build script leaves in the
+# repo root on Windows when building locally. They belong in OUT_DIR but
+# escape there sometimes; never commit them.
+*.lib
+*.exp
+*.obj
+*.pdb
+*.ilk
+
 # Node (pnpm)
 node_modules/
 .pnpm-store/
