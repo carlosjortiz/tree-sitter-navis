@@ -1,5 +1,25 @@
 [
   {
+    "type": "assert_block",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "block_content",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "block_content",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "body",
     "named": true,
     "fields": {}
@@ -8,6 +28,21 @@
     "type": "comment",
     "named": true,
     "fields": {}
+  },
+  {
+    "type": "docs_block",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "block_content",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "endpoint_var",
@@ -106,8 +141,26 @@
     "type": "request",
     "named": true,
     "fields": {
+      "block": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "assert_block",
+            "named": true
+          },
+          {
+            "type": "docs_block",
+            "named": true
+          },
+          {
+            "type": "tests_block",
+            "named": true
+          }
+        ]
+      },
       "body": {
-        "multiple": false,
+        "multiple": true,
         "required": false,
         "types": [
           {
@@ -218,6 +271,21 @@
       "types": [
         {
           "type": "placeholder",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "tests_block",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "block_content",
           "named": true
         }
       ]

@@ -1,0 +1,190 @@
+==================
+assert block
+==================
+
+### Login
+POST /auth
+
+assert {
+  response.status: eq 200
+  response.body.token: exists
+}
+
+---
+
+(source_file
+  (request
+    (request_separator name: (value))
+    method: (method)
+    url: (target_url)
+    block: (assert_block
+      (block_content))))
+
+==================
+tests block
+==================
+
+### Check
+GET /a
+
+tests {
+  expect(response.status).toBe(200)
+}
+
+---
+
+(source_file
+  (request
+    (request_separator name: (value))
+    method: (method)
+    url: (target_url)
+    block: (tests_block
+      (block_content))))
+
+==================
+docs block
+==================
+
+### Doc
+GET /a
+
+docs {
+  # Title
+  Some markdown.
+}
+
+---
+
+(source_file
+  (request
+    (request_separator name: (value))
+    method: (method)
+    url: (target_url)
+    block: (docs_block
+      (block_content))))
+
+==================
+all three blocks after body
+==================
+
+### Login
+POST /auth
+Content-Type: application/json
+
+{ "u": "x" }
+assert {
+  response.status: eq 200
+}
+tests {
+  expect(1).toBe(1)
+}
+docs {
+  Auth endpoint.
+}
+
+---
+
+(source_file
+  (request
+    (request_separator name: (value))
+    method: (method)
+    url: (target_url)
+    header: (header
+      name: (header_name)
+      value: (value))
+    body: (body)
+    block: (assert_block
+      (block_content))
+    block: (tests_block
+      (block_content))
+    block: (docs_block
+      (block_content))))
+
+==================
+block with nested indented braces
+==================
+
+### Nested
+GET /a
+
+tests {
+  if (ok) {
+    expect(1).toBe(1)
+  }
+}
+
+---
+
+(source_file
+  (request
+    (request_separator name: (value))
+    method: (method)
+    url: (target_url)
+    block: (tests_block
+      (block_content))))
+
+==================
+block directly after request line without blank
+==================
+
+### Quick
+GET /a
+assert {
+  response.status: eq 200
+}
+
+---
+
+(source_file
+  (request
+    (request_separator name: (value))
+    method: (method)
+    url: (target_url)
+    block: (assert_block
+      (block_content))))
+
+==================
+empty block
+==================
+
+### Empty
+GET /a
+
+docs {
+}
+
+---
+
+(source_file
+  (request
+    (request_separator name: (value))
+    method: (method)
+    url: (target_url)
+    block: (docs_block)))
+
+==================
+blocks separated by blank lines
+==================
+
+### Sep
+GET /a
+
+assert {
+  response.status: eq 200
+}
+
+tests {
+  expect(1).toBe(1)
+}
+
+---
+
+(source_file
+  (request
+    (request_separator name: (value))
+    method: (method)
+    url: (target_url)
+    block: (assert_block
+      (block_content))
+    block: (tests_block
+      (block_content))))

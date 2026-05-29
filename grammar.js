@@ -35,9 +35,16 @@
 const PREC = {
   COMMENT_PREFIX: 5,
   // Body lines outrank WS (0) and comments (5) so a body line that starts
-  // with whitespace or `#` is kept whole, but stay below the separator so
-  // `###` still terminates the body.
+  // with whitespace or `#` is kept whole.
   BODY: 6,
+  // Header names outrank body lines so a `Name: value` line in the header
+  // section is a header, not a body line. (Body is only reachable after the
+  // blank line, where headers are no longer a candidate, so this never
+  // steals a genuine body line.)
+  HEADER: 7,
+  // Block openers (`assert {`, `tests {`, ...) outrank header names and body
+  // lines so a block ends the header/body section.
+  BLOCK: 8,
   REQ_SEPARATOR: 9,
 };
 
@@ -114,22 +121,62 @@ module.exports = grammar({
       optional(seq(SEP_WS, field('version', $.http_version))),
       NL,
       repeat(field('header', $.header)),
-      optional($._body_section),
+      // After the headers come, in any interleaving, blank lines, an opaque
+      // body, and the named blocks. Headers are matched first (they precede
+      // this repeat); a `Name: value` line is only a body line once a blank
+      // line has ended the header section, after which `header` is no longer
+      // a candidate. The precedence of `header_name` over body lines is what
+      // keeps genuine headers from being swallowed as body.
+      repeat(choice(
+        $._blank_line,
+        field('body', $.body),
+        field('block', $._request_block),
+      )),
     )),
 
-    // The blank line(s) separating headers from body are ALWAYS consumed by
-    // this hidden section; the body content itself is optional. This means a
-    // request followed by a blank line and then `###` (or EOF) leaves no
-    // orphaned blank line — the body content is simply absent.
-    _body_section: $ => prec.right(seq(
-      repeat1($._blank_line),
-      optional(field('body', $.body)),
-    )),
+    // ---- Per-request blocks -------------------------------------------------
 
-    // The body is the raw text after the blank separator, running until the
-    // next `###` separator or end of file. It is captured OPAQUELY: typing
-    // (JSON/XML/GraphQL/...) is applied later via the Content-Type header and
-    // language injection, not by sniffing the first byte here.
+    // Named blocks that follow a request: declarative assertions, JS tests,
+    // and markdown docs. Their content is captured OPAQUELY for now; the
+    // embedded language (JS for `tests`, markdown for `docs`) is parsed later
+    // via tree-sitter injection. The `assert` DSL will be parsed by the host
+    // grammar in a later step.
+    //
+    // Closing convention (adopted from Bruno): the block content is indented
+    // and the closing `}` sits in column 0 on its own line. A `}` that is not
+    // in column 0 is ordinary content, so nested braces in JS never close the
+    // block early.
+    _request_block: $ => choice(
+      $.assert_block,
+      $.tests_block,
+      $.docs_block,
+    ),
+
+    assert_block: $ => seq($._assert_open, optional($.block_content), $._block_close),
+    tests_block: $ => seq($._tests_open, optional($.block_content), $._block_close),
+    docs_block: $ => seq($._docs_open, optional($.block_content), $._block_close),
+
+    // The opener carries the keyword, the `{`, and the trailing newline as one
+    // token, at BLOCK precedence so it wins over a body line. Requiring the
+    // `{` means a body line that merely starts with the word (`tests passed`)
+    // is NOT mistaken for a block.
+    _assert_open: _ => token(prec(PREC.BLOCK, seq('assert', /[ \t]*/, '{', LINE_END))),
+    _tests_open: _ => token(prec(PREC.BLOCK, seq('tests', /[ \t]*/, '{', LINE_END))),
+    _docs_open: _ => token(prec(PREC.BLOCK, seq('docs', /[ \t]*/, '{', LINE_END))),
+
+    block_content: $ => repeat1($._block_line),
+
+    // Any line that does NOT start with `}` in column 0 (an indented `}` is
+    // content). Empty lines are allowed inside a block.
+    _block_line: _ => token(prec(PREC.BLOCK, seq(optional(/[^}\r\n][^\r\n]*/), LINE_END))),
+
+    // The closing `}` in column 0, with its newline.
+    _block_close: _ => token(prec(PREC.BLOCK, seq('}', LINE_END))),
+
+    // The body is a run of contiguous non-blank lines, captured OPAQUELY:
+    // typing (JSON/XML/GraphQL/...) is applied later via the Content-Type
+    // header and language injection, not by sniffing the first byte here. It
+    // ends at a blank line, a block opener, the next `###`, or end of file.
     body: $ => prec.right(repeat1($._body_line)),
 
     // A non-empty body line that does not begin with `###` (so the separator
@@ -150,7 +197,7 @@ module.exports = grammar({
       NL,
     ),
 
-    header_name: _ => token(/[A-Za-z0-9!#$%&'*+\-.^_`|~]+/),
+    header_name: _ => token(prec(PREC.HEADER, /[A-Za-z0-9!#$%&'*+\-.^_`|~]+/)),
 
     // `###` (three or more), optional name on the same line. The high
     // precedence keeps `###` from being lexed as a `#` comment.
