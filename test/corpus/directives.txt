@@ -1,0 +1,95 @@
+==================
+no-cookie-jar directive
+==================
+
+### Public
+# @no-cookie-jar
+GET /public
+
+---
+
+(source_file
+  (request
+    (request_separator name: (value))
+    directive: (directive
+      name: (directive_name))
+    method: (method)
+    url: (target_url)))
+
+==================
+directive without space after hash
+==================
+
+### Public
+#@no-cookie-jar
+GET /public
+
+---
+
+(source_file
+  (request
+    (request_separator name: (value))
+    directive: (directive
+      name: (directive_name))
+    method: (method)
+    url: (target_url)))
+
+==================
+comment and directive in prelude
+==================
+
+### Mixed
+# a note
+# @no-cookie-jar
+GET /x
+Accept: application/json
+
+---
+
+(source_file
+  (request
+    (request_separator name: (value))
+    (comment)
+    directive: (directive
+      name: (directive_name))
+    method: (method)
+    url: (target_url)
+    header: (header
+      name: (header_name)
+      value: (value))))
+
+==================
+top-level @-comment stays a plain comment
+==================
+
+# @foo bar
+@base = x
+
+---
+
+(source_file
+  (comment)
+  (endpoint_var
+    name: (identifier)
+    value: (value)))
+
+==================
+multiple directives
+==================
+
+### Multi
+# @no-cookie-jar
+# @no-redirect
+GET /x
+
+---
+
+(source_file
+  (request
+    (request_separator name: (value))
+    directive: (directive
+      name: (directive_name))
+    directive: (directive
+      name: (directive_name))
+    method: (method)
+    url: (target_url)))

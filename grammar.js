@@ -129,6 +129,9 @@ module.exports = grammar({
     // body instead of ending early and leaving them as top-level items.
     request: $ => prec.right(seq(
       $.request_separator,
+      // Per-request prelude: directives (`# @no-cookie-jar`) and plain
+      // comments may sit between the separator and the request line.
+      repeat(choice(field('directive', $.directive), $.comment)),
       optional(WS),
       field('method', $.method),
       SEP_WS,
@@ -270,6 +273,20 @@ module.exports = grammar({
       NL,
     ),
     _line_text: _ => token(/[^\r\n]+/),
+
+    // A per-request directive: `# @name`. The `# @` prefix is a single token
+    // at higher precedence than the comment prefix, so a directive is never
+    // mis-lexed as a plain comment. The name is open-ended (`no-cookie-jar`
+    // today; future directives need no grammar change — the runtime validates
+    // which names are known).
+    directive: $ => seq(
+      $._directive_prefix,
+      field('name', $.directive_name),
+      optional(WS),
+      NL,
+    ),
+    _directive_prefix: _ => token(prec(PREC.COMMENT_PREFIX + 1, /#[ \t]*@/)),
+    directive_name: _ => /[a-zA-Z][a-zA-Z0-9-]*/,
 
     _blank_line: _ => seq(optional(WS), token(prec(-1, choice('\n', '\r\n', '\r')))),
   },

@@ -30,6 +30,22 @@
     "fields": {}
   },
   {
+    "type": "directive",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "directive_name",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "docs_block",
     "named": true,
     "fields": {},
@@ -199,6 +215,16 @@
           }
         ]
       },
+      "directive": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "directive",
+            "named": true
+          }
+        ]
+      },
       "header": {
         "multiple": true,
         "required": false,
@@ -241,9 +267,13 @@
       }
     },
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "comment",
+          "named": true
+        },
         {
           "type": "request_separator",
           "named": true
@@ -411,6 +441,10 @@
   {
     "type": "api",
     "named": false
+  },
+  {
+    "type": "directive_name",
+    "named": true
   },
   {
     "type": "endpoint",
