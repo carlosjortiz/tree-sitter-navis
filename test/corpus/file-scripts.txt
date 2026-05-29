@@ -1,0 +1,94 @@
+==================
+file-level pre-request script
+==================
+
+pre-request {
+  vars.endpoint.startedAt = Date.now()
+}
+
+---
+
+(source_file
+  (pre_request_block
+    (block_content)))
+
+==================
+file-level post-request script
+==================
+
+post-request {
+  console.log(response.status)
+}
+
+---
+
+(source_file
+  (post_request_block
+    (block_content)))
+
+==================
+both file scripts before a request
+==================
+
+pre-request {
+  vars.endpoint.t = Date.now()
+}
+post-request {
+  navis.log(response.status)
+}
+
+### Login
+POST /auth
+
+---
+
+(source_file
+  (pre_request_block
+    (block_content))
+  (post_request_block
+    (block_content))
+  (request
+    (request_separator name: (value))
+    method: (method)
+    url: (target_url)))
+
+==================
+file scripts with endpoint vars and comments
+==================
+
+@base = https://api.example.com
+
+# runs before every request
+pre-request {
+  request.headers["X-Trace"] = "1"
+}
+
+### Get
+GET {{base}}/users
+
+---
+
+(source_file
+  (endpoint_var
+    name: (identifier)
+    value: (value))
+  (comment)
+  (pre_request_block
+    (block_content))
+  (request
+    (request_separator name: (value))
+    method: (method)
+    url: (target_url
+      (placeholder name: (identifier)))))
+
+==================
+empty file script
+==================
+
+pre-request {
+}
+
+---
+
+(source_file
+  (pre_request_block))

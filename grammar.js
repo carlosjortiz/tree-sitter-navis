@@ -92,9 +92,24 @@ module.exports = grammar({
     source_file: $ => repeat(choice(
       $.comment,
       $.endpoint_var,
+      $.pre_request_block,
+      $.post_request_block,
       $.request,
       $._blank_line,
     )),
+
+    // ---- File-level scripts -------------------------------------------------
+
+    // `pre-request { ... }` / `post-request { ... }` declared at file scope.
+    // They run on EVERY request in the file; their position in the file
+    // decides when they run. Content is opaque JS (parsed later via injection)
+    // and uses the same column-0 closing-brace convention as the per-request
+    // blocks.
+    pre_request_block: $ => seq($._pre_request_open, optional($.block_content), $._block_close),
+    post_request_block: $ => seq($._post_request_open, optional($.block_content), $._block_close),
+
+    _pre_request_open: _ => token(prec(PREC.BLOCK, seq('pre-request', /[ \t]*/, '{', LINE_END))),
+    _post_request_open: _ => token(prec(PREC.BLOCK, seq('post-request', /[ \t]*/, '{', LINE_END))),
 
     // ---- Endpoint vars ------------------------------------------------------
 
