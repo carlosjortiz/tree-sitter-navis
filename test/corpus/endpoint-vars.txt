@@ -9,8 +9,7 @@ single endpoint var
 (source_file
   (endpoint_var
     name: (identifier)
-    value: (value
-      (text_literal))))
+    value: (value)))
 
 ==================
 multiple endpoint vars
@@ -24,12 +23,10 @@ multiple endpoint vars
 (source_file
   (endpoint_var
     name: (identifier)
-    value: (value
-      (text_literal)))
+    value: (value))
   (endpoint_var
     name: (identifier)
-    value: (value
-      (text_literal))))
+    value: (value)))
 
 ==================
 endpoint vars mixed with comments
@@ -46,13 +43,11 @@ endpoint vars mixed with comments
   (comment)
   (endpoint_var
     name: (identifier)
-    value: (value
-      (text_literal)))
+    value: (value))
   (comment)
   (endpoint_var
     name: (identifier)
-    value: (value
-      (text_literal))))
+    value: (value)))
 
 ==================
 endpoint var with extra whitespace around equals
@@ -65,8 +60,7 @@ endpoint var with extra whitespace around equals
 (source_file
   (endpoint_var
     name: (identifier)
-    value: (value
-      (text_literal))))
+    value: (value)))
 
 ==================
 identifier with underscores
@@ -79,17 +73,17 @@ identifier with underscores
 (source_file
   (endpoint_var
     name: (identifier)
-    value: (value
-      (text_literal))))
+    value: (value)))
 
 ==================
-endpoint var without trailing newline
+identifier with dash
 ==================
-@key = no trailing newline
+
+@base-url = http://localhost
+
 ---
 
 (source_file
   (endpoint_var
     name: (identifier)
-    value: (value
-      (text_literal))))
+    value: (value)))

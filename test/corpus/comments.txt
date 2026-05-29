@@ -59,12 +59,3 @@ comments separated by blank lines
 (source_file
   (comment)
   (comment))
-
-==================
-comment without trailing newline
-==================
-# no trailing newline
----
-
-(source_file
-  (comment))

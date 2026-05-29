@@ -9,10 +9,10 @@ GET https://api.example.com/users
 
 (source_file
   (request
-    name: (request_name)
+    (request_separator
+      name: (value))
     method: (method)
-    url: (url
-      (text_literal))))
+    url: (target_url)))
 
 ==================
 request without name
@@ -25,9 +25,9 @@ GET https://api.example.com/users
 
 (source_file
   (request
+    (request_separator)
     method: (method)
-    url: (url
-      (text_literal))))
+    url: (target_url)))
 
 ==================
 common HTTP methods
@@ -48,28 +48,51 @@ PATCH /users
 
 (source_file
   (request
-    name: (request_name)
+    (request_separator name: (value))
     method: (method)
-    url: (url (text_literal)))
+    url: (target_url))
   (request
-    name: (request_name)
+    (request_separator name: (value))
     method: (method)
-    url: (url (text_literal)))
+    url: (target_url))
   (request
-    name: (request_name)
+    (request_separator name: (value))
     method: (method)
-    url: (url (text_literal)))
+    url: (target_url))
   (request
-    name: (request_name)
+    (request_separator name: (value))
     method: (method)
-    url: (url (text_literal)))
+    url: (target_url))
   (request
-    name: (request_name)
+    (request_separator name: (value))
     method: (method)
-    url: (url (text_literal))))
+    url: (target_url)))
 
 ==================
-URL with placeholders only
+GraphQL and WebSocket methods
+==================
+
+### Query
+GRAPHQL {{base}}/graphql
+### Stream
+WEBSOCKET {{base}}/ws
+
+---
+
+(source_file
+  (request
+    (request_separator name: (value))
+    method: (method)
+    url: (target_url
+      (placeholder name: (identifier))))
+  (request
+    (request_separator name: (value))
+    method: (method)
+    url: (target_url
+      (placeholder name: (identifier)))))
+
+==================
+URL with placeholders
 ==================
 
 ### Get user
@@ -79,13 +102,12 @@ GET {{api.base_url}}/users/{{id}}
 
 (source_file
   (request
-    name: (request_name)
+    (request_separator name: (value))
     method: (method)
-    url: (url
+    url: (target_url
       (placeholder
         qualifier: (qualifier)
         name: (identifier))
-      (text_literal)
       (placeholder
         name: (identifier)))))
 
@@ -100,14 +122,65 @@ POST https://{{api.host}}:8080/v1/users
 
 (source_file
   (request
-    name: (request_name)
+    (request_separator name: (value))
     method: (method)
-    url: (url
-      (text_literal)
+    url: (target_url
       (placeholder
         qualifier: (qualifier)
-        name: (identifier))
-      (text_literal))))
+        name: (identifier)))))
+
+==================
+request line with HTTP version
+==================
+
+### Versioned
+GET /a/b HTTP/1.1
+
+---
+
+(source_file
+  (request
+    (request_separator name: (value))
+    method: (method)
+    url: (target_url)
+    version: (http_version)))
+
+==================
+multi-line URL with continuation
+==================
+
+### Long
+GET {{base}}/very/long/path
+  ?foo=1&bar=2
+
+---
+
+(source_file
+  (request
+    (request_separator name: (value))
+    method: (method)
+    url: (target_url
+      (placeholder name: (identifier)))))
+
+==================
+request name with placeholder
+==================
+
+### User {{request.userId}}
+GET {{base}}/users
+
+---
+
+(source_file
+  (request
+    (request_separator
+      name: (value
+        (placeholder
+          qualifier: (qualifier)
+          name: (identifier))))
+    method: (method)
+    url: (target_url
+      (placeholder name: (identifier)))))
 
 ==================
 multiple requests with endpoint vars and comments
@@ -128,36 +201,15 @@ GET {{base}}/me
 (source_file
   (endpoint_var
     name: (identifier)
-    value: (value
-      (text_literal)))
+    value: (value))
   (comment)
   (request
-    name: (request_name)
+    (request_separator name: (value))
     method: (method)
-    url: (url
-      (placeholder
-        name: (identifier))
-      (text_literal)))
+    url: (target_url
+      (placeholder name: (identifier))))
   (request
-    name: (request_name)
+    (request_separator name: (value))
     method: (method)
-    url: (url
-      (placeholder
-        name: (identifier))
-      (text_literal))))
-
-==================
-custom HTTP method (WebDAV)
-==================
-
-### List files
-PROPFIND /webdav/files
-
----
-
-(source_file
-  (request
-    name: (request_name)
-    method: (method)
-    url: (url
-      (text_literal))))
+    url: (target_url
+      (placeholder name: (identifier)))))

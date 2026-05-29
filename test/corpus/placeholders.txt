@@ -9,8 +9,7 @@ plain text value (no placeholder)
 (source_file
   (endpoint_var
     name: (identifier)
-    value: (value
-      (text_literal))))
+    value: (value)))
 
 ==================
 single placeholder without qualifier
@@ -92,11 +91,9 @@ text mixed with placeholder
   (endpoint_var
     name: (identifier)
     value: (value
-      (text_literal)
       (placeholder
         qualifier: (qualifier)
-        name: (identifier))
-      (text_literal))))
+        name: (identifier)))))
 
 ==================
 multiple placeholders in one value
@@ -112,10 +109,8 @@ multiple placeholders in one value
     value: (value
       (placeholder
         name: (identifier))
-      (text_literal)
       (placeholder
         name: (identifier))
-      (text_literal)
       (placeholder
         name: (identifier)))))
 
