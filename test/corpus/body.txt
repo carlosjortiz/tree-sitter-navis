@@ -1,0 +1,104 @@
+==================
+simple text body
+==================
+
+### Post
+POST /echo
+
+hello world
+
+---
+
+(source_file
+  (request
+    (request_separator name: (value))
+    method: (method)
+    url: (target_url)
+    body: (body)))
+
+==================
+JSON body with header
+==================
+
+### Create
+POST /users
+Content-Type: application/json
+
+{
+  "name": "Ada",
+  "role": "admin"
+}
+
+---
+
+(source_file
+  (request
+    (request_separator name: (value))
+    method: (method)
+    url: (target_url)
+    header: (header
+      name: (header_name)
+      value: (value))
+    body: (body)))
+
+==================
+body terminates at next request separator
+==================
+
+### First
+POST /a
+
+body of first
+
+### Second
+GET /b
+
+---
+
+(source_file
+  (request
+    (request_separator name: (value))
+    method: (method)
+    url: (target_url)
+    body: (body))
+  (request
+    (request_separator name: (value))
+    method: (method)
+    url: (target_url)))
+
+==================
+request without body
+==================
+
+### Get
+GET /users
+Accept: application/json
+
+---
+
+(source_file
+  (request
+    (request_separator name: (value))
+    method: (method)
+    url: (target_url)
+    header: (header
+      name: (header_name)
+      value: (value))))
+
+==================
+body with placeholder text (opaque)
+==================
+
+### Login
+POST /auth
+
+{ "user": "{{workspace.user}}" }
+
+---
+
+(source_file
+  (request
+    (request_separator name: (value))
+    method: (method)
+    url: (target_url)
+    body: (body)))

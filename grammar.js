@@ -34,6 +34,10 @@
 // Precedence levels for token-conflict resolution. Higher wins on ties.
 const PREC = {
   COMMENT_PREFIX: 5,
+  // Body lines outrank WS (0) and comments (5) so a body line that starts
+  // with whitespace or `#` is kept whole, but stay below the separator so
+  // `###` still terminates the body.
+  BODY: 6,
   REQ_SEPARATOR: 9,
 };
 
@@ -54,6 +58,18 @@ const SEP_WS = token(prec(1, /[ \t]+/));
 // keeps placeholders as the only NAMED nodes inside a value/url.
 const WORD_CHAR = /[\p{L}\p{N}]/u;
 const PUNCTUATION = /[^\n\r\p{Z}\p{L}\p{N}]/u;
+
+// The text of a body line that does NOT begin with the `###` request
+// separator. Body lines must exclude `###` at column 0 so a body never
+// swallows the next request; tree-sitter has no lookahead, so the cases are
+// spelled out: a line whose first char is not `#`, a line with one or two
+// leading `#` followed by a non-`#`, or a line of just one or two `#`.
+const BODY_TEXT = choice(
+  /[^#\r\n][^\r\n]*/,
+  /##?[^#\r\n][^\r\n]*/,
+  /##?/,
+);
+const LINE_END = choice('\n', '\r\n', '\r', '\0');
 
 module.exports = grammar({
   name: 'navis',
@@ -87,7 +103,9 @@ module.exports = grammar({
 
     // ---- Requests -----------------------------------------------------------
 
-    request: $ => seq(
+    // `prec.right` makes the request greedily absorb its trailing headers and
+    // body instead of ending early and leaving them as top-level items.
+    request: $ => prec.right(seq(
       $.request_separator,
       optional(WS),
       field('method', $.method),
@@ -96,7 +114,29 @@ module.exports = grammar({
       optional(seq(SEP_WS, field('version', $.http_version))),
       NL,
       repeat(field('header', $.header)),
-    ),
+      optional($._body_section),
+    )),
+
+    // The blank line(s) separating headers from body are ALWAYS consumed by
+    // this hidden section; the body content itself is optional. This means a
+    // request followed by a blank line and then `###` (or EOF) leaves no
+    // orphaned blank line — the body content is simply absent.
+    _body_section: $ => prec.right(seq(
+      repeat1($._blank_line),
+      optional(field('body', $.body)),
+    )),
+
+    // The body is the raw text after the blank separator, running until the
+    // next `###` separator or end of file. It is captured OPAQUELY: typing
+    // (JSON/XML/GraphQL/...) is applied later via the Content-Type header and
+    // language injection, not by sniffing the first byte here.
+    body: $ => prec.right(repeat1($._body_line)),
+
+    // A non-empty body line that does not begin with `###` (so the separator
+    // always wins and terminates the body). Blank lines are not body lines —
+    // they are consumed as separators — so a body is a run of contiguous
+    // non-blank lines.
+    _body_line: _ => token(prec(PREC.BODY, seq(BODY_TEXT, LINE_END))),
 
     // `Name: value`, one per line. The name follows RFC 7230 token chars
     // (more permissive than `[\w-]+` — `.`, `$`, etc. are legal in header

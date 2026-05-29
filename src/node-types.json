@@ -1,5 +1,10 @@
 [
   {
+    "type": "body",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "comment",
     "named": true,
     "fields": {}
@@ -101,6 +106,16 @@
     "type": "request",
     "named": true,
     "fields": {
+      "body": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "body",
+            "named": true
+          }
+        ]
+      },
       "header": {
         "multiple": true,
         "required": false,
