@@ -95,7 +95,22 @@ module.exports = grammar({
       field('url', $.target_url),
       optional(seq(SEP_WS, field('version', $.http_version))),
       NL,
+      repeat(field('header', $.header)),
     ),
+
+    // `Name: value`, one per line. The name follows RFC 7230 token chars
+    // (more permissive than `[\w-]+` — `.`, `$`, etc. are legal in header
+    // names). Whitespace is tolerated both before and after the colon.
+    header: $ => seq(
+      field('name', $.header_name),
+      optional(WS),
+      ':',
+      optional(SEP_WS),
+      optional(field('value', $.value)),
+      NL,
+    ),
+
+    header_name: _ => token(/[A-Za-z0-9!#$%&'*+\-.^_`|~]+/),
 
     // `###` (three or more), optional name on the same line. The high
     // precedence keeps `###` from being lexed as a `#` comment.

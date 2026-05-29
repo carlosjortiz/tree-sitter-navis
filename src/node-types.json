@@ -31,6 +31,32 @@
     }
   },
   {
+    "type": "header",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "header_name",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "value",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "http_version",
     "named": true,
     "fields": {}
@@ -75,6 +101,16 @@
     "type": "request",
     "named": true,
     "fields": {
+      "header": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "header",
+            "named": true
+          }
+        ]
+      },
       "method": {
         "multiple": false,
         "required": true,
@@ -196,6 +232,10 @@
     "named": false
   },
   {
+    "type": ":",
+    "named": false
+  },
+  {
     "type": "=",
     "named": false
   },
@@ -254,6 +294,10 @@
   {
     "type": "endpoint",
     "named": false
+  },
+  {
+    "type": "header_name",
+    "named": true
   },
   {
     "type": "identifier",

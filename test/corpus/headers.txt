@@ -1,0 +1,155 @@
+==================
+single header
+==================
+
+### Get
+GET /users
+Accept: application/json
+
+---
+
+(source_file
+  (request
+    (request_separator name: (value))
+    method: (method)
+    url: (target_url)
+    header: (header
+      name: (header_name)
+      value: (value))))
+
+==================
+multiple headers
+==================
+
+### Get
+GET /users
+Accept: application/json
+Authorization: Bearer token123
+X-Custom-Header: value
+
+---
+
+(source_file
+  (request
+    (request_separator name: (value))
+    method: (method)
+    url: (target_url)
+    header: (header
+      name: (header_name)
+      value: (value))
+    header: (header
+      name: (header_name)
+      value: (value))
+    header: (header
+      name: (header_name)
+      value: (value))))
+
+==================
+header value with placeholder
+==================
+
+### Auth
+GET /me
+Authorization: Bearer {{endpoint.token}}
+
+---
+
+(source_file
+  (request
+    (request_separator name: (value))
+    method: (method)
+    url: (target_url)
+    header: (header
+      name: (header_name)
+      value: (value
+        (placeholder
+          qualifier: (qualifier)
+          name: (identifier))))))
+
+==================
+header without value
+==================
+
+### Probe
+GET /ping
+X-Empty:
+
+---
+
+(source_file
+  (request
+    (request_separator name: (value))
+    method: (method)
+    url: (target_url)
+    header: (header
+      name: (header_name))))
+
+==================
+header with whitespace before colon
+==================
+
+### Get
+GET /users
+Host : example.com
+
+---
+
+(source_file
+  (request
+    (request_separator name: (value))
+    method: (method)
+    url: (target_url)
+    header: (header
+      name: (header_name)
+      value: (value))))
+
+==================
+header name with dots and underscores
+==================
+
+### Get
+GET /users
+X.Custom_Header: ok
+
+---
+
+(source_file
+  (request
+    (request_separator name: (value))
+    method: (method)
+    url: (target_url)
+    header: (header
+      name: (header_name)
+      value: (value))))
+
+==================
+request with endpoint vars headers and comment
+==================
+
+@base = https://api.example.com
+
+### Create user
+POST {{base}}/users
+Content-Type: application/json
+Authorization: Bearer {{api.key}}
+
+---
+
+(source_file
+  (endpoint_var
+    name: (identifier)
+    value: (value))
+  (request
+    (request_separator name: (value))
+    method: (method)
+    url: (target_url
+      (placeholder name: (identifier)))
+    header: (header
+      name: (header_name)
+      value: (value))
+    header: (header
+      name: (header_name)
+      value: (value
+        (placeholder
+          qualifier: (qualifier)
+          name: (identifier))))))
